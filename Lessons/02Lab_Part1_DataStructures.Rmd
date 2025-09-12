@@ -1,8 +1,11 @@
 ---
 title: "Lab 2 - Data Structures in R"
-subtitle: "Environmental Data Analytics"
 author: "John Fay & Luana Lima"
 date: "Fall 2025"
+output: pdf_document
+editor_options:
+  chunk_output_type: console
+subtitle: Environmental Data Analytics
 ---
 
 ## Objective
@@ -39,10 +42,10 @@ vector1 <- c(1,2,5.3,6,-2,4) # Vector type: Numeric
 vector1
 class(vector1)
 
-vector2 <- c("one","two","three") # Vector type: 
+vector2 <- c("one","two","three") # Vector type: Character
 vector2
 
-vector3 <- c(TRUE,TRUE,TRUE,FALSE,TRUE,FALSE) # Vector type:
+vector3 <- c(TRUE,TRUE,TRUE,FALSE,TRUE,FALSE) # Vector type: Logical
 vector3
 ```
 
@@ -53,25 +56,25 @@ Add comments below to indicate what each operation does.(First answer is provide
 # Returns the 3rd item in the vector
 vector1[3]
 
-#
+# Maximum numeric value
 max(vector1)
 
 #Create another vector of the values 10 thru 15
 vector4 <- c(10:15)
 
-#
+# Combining vector1 and vector 4, in console not saved value
 c(vector1, vector4)
 
-#
+# multiply vector 1 and 4 
 vector1 * vector4
 
-#
+# multiply vector1 and 10
 vector1 * 10
 
-#
+# to upper - everything is noq uppercase
 toupper(vector2) 
 
-#
+# ! = not so it would invert original data
 !vector3
 
 ```
@@ -83,16 +86,16 @@ Find a 5-day forecast of temperatures (Fahrenheit) for Durham, North Carolina. C
 ```{r Vector Exercise}
 
 #Assign to the variable 'temps_F' a vector of high temperatures in F
+temps_F <- c(80,81,81,83,83)
 
+#What is the average of these temperatures = 81.6
+average <- mean(temps_F)
 
-#What is the average of these temperatures 
+#Compute the difference between each temperature and the average calculated above > temps_F-81.6 [1] -1.6 -0.6 -0.6  1.4  1.4
+diff <- temps_F-81.6
 
-
-#Compute the difference between each temperature and the average calculated above
-
-
-#Subtract 32 and multiply by 5/9ths to create a vector in Celsius
-
+#Subtract 32 and multiply by 5/9ths to create a vector in Celsius > (temps_F-32)*(5/9) [1] 26.66667 27.22222 27.22222 28.33333 28.33333
+Temp_C <- (temps_F-32)*(5/9)
 
 ```
 
@@ -103,11 +106,11 @@ Complete the comments below:
 # Matrices ----
 matrix1 <- matrix(1:20, nrow = 5,ncol = 4) # 
 matrix1
-#matrix1 has __ rows and __ columns
+#matrix1 has _5_ rows and _4_ columns
 
 matrix2 <- matrix(1:20, nrow = 5, ncol = 4, byrow = TRUE) #
 matrix2
-#matrix2 has __ rows and __ columns
+#matrix2 has _5_ rows and _4_ columns
 
 matrix3 <- matrix(
   data = 1:20, 
@@ -126,17 +129,17 @@ matrix3 <- matrix(
 Add comments in the code chunk below to indicate type of vectors created and what each operation does.
 ```{r Matrix Operations}
 
-matrix1[4, 1] #
+matrix1[4, 1] # row, column
 
-matrix1[4,  ] #
+matrix1[4,  ] # gives whole row 4
 
-matrix1[ , 3] #
+matrix1[ , 3] # gives whole column 3
 
-matrix1[c(12, 14)] #
+matrix1[c(12, 14)] # gives 12 and 14 info
 
-matrix1[c(12:14)] #
+matrix1[c(12:14)] # gives 12-14 including 13 colin gives slices
 
-matrix1[2:4, 1:3] #
+matrix1[2:4, 1:3] # gives 2-4 row, 1-3 column
 
 #Create a vector of 6 values
 values = c(1, 26, 24, 68, 3, 44)
@@ -163,7 +166,7 @@ matrix4['R2','C1']
 ### Exercise 1b: Matrices
 Compute the mean of column "C2" in matrix4. (Should be 14.5)
 ```{r Matrix Exercise}
-
+mean(matrix4[ ,2])
 ```
 
 
@@ -198,10 +201,10 @@ names(list1)
 #
 list1[1:2]
 
-#
+# change list name
 list1$name = "Janelle"
 
-#
+# find value 4
 list1[[4]] = 44
 ```
 
@@ -210,15 +213,15 @@ list1[[4]] = 44
 ```{r Creating data frames}
 # Data Frames ----
 #Create three vectors of equal length
-d <- c(1, 2, 3, 4) # What type of vector?
-e <- c("red", "white", "red", NA) # What type of vector?
-f <- c(TRUE, TRUE, TRUE, FALSE) # What type of vector?
+d <- c(1, 2, 3, 4) # What type of vector? Numeric
+e <- c("red", "white", "red", NA) # What type of vector? Character
+f <- c(TRUE, TRUE, TRUE, FALSE) # What type of vector? Logical
 
 #Combine the vectors into a dataframe
 dataframe1 <- data.frame(d,e,f) 
 
 #Set the column names & View
-names(dataframe1) <- c("ID","Color","Passed"); View(dataframe1) # 
+names(dataframe1) <- c("ID","Color","Passed"); View(dataframe1) # columns of dataframe update with vector (same length as dataset)
 
 #Add a new column to the dataframe
 dataframe1$month <- c('Jan','Feb', 'Mar', 'Apr')
@@ -228,7 +231,7 @@ dataframe1$month <- c('Jan','Feb', 'Mar', 'Apr')
 
 ### Dataframe operations
 ```{r Dataframe Operations}
-#Extract a column from the dataframe f
+#Extract a column from the dataframe f  -- can add dataframe1$Color[2] to get 2nd in the column color
 dataframe1$Color
 
 #Extract a row
@@ -240,7 +243,7 @@ dataframe1[1:2,]
 #Extract a column
 dataframe1[,1]
 
-#Extract a column/columns from their name
+#Extract a column/columns from their name, $ notation pulled out as vector. 
 out1 <- dataframe1['Color']; class(out1)
 
 out2 <- dataframe1$Color; class(out2)
