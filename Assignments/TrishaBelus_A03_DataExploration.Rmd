@@ -58,18 +58,14 @@ Litter <- read.csv(
 
 3.  The Niwot Ridge litter and woody debris dataset was collected from the National Ecological Observatory Network, which collectively includes 81 aquatic and terrestrial sites across 20 ecoclimatic domains. 32 of these sites sample forest litter and woody debris, and we will focus on the Niwot Ridge long-term ecological research (LTER) station in Colorado. Why might we be interested in studying litter and woody debris that falls to the ground in forests? Feel free to do a brief internet search if you feel you need more background information.
 
-> Answer:The amount of litter and woody debris might correspond with the density or likelihood of certain species inhabiting the area. Also, the amount of litter or woody debris on the ground might give insight to how at risk the area is for a severe forest fire since there might be more or less kindling in the area.
+> Answer:The amount of litter and woody debris might correspond with the density or likelihood of certain species (insects) inhabiting the patch of forest. Also, the amount of litter or woody debris on the ground of forests might give insight to how at risk the area is for a severe forest fire since there might be more or less kindling in the area.
 
 4.  How is litter and woody debris sampled as part of the NEON network? Read the NEON_Litterfall_UserGuide.pdf document to learn more. List three pieces of salient information about the sampling methods here:
 
 > Answer: 
- 1.For every 400m^2 plot area, there is one 
- elevated trap and one ground trap deployed.
- 2.Each plot has 1-4 trap pairs.
- 3.The placement of traps within the plot
- is dependent on the kind of vegetation -
- percent aerial cover, height, and patchiness 
- are considered.
+ 1.For every 400m^2 plot area, there is one elevated trap and one ground trap deployed.
+ 2.Plot edges are separated by a distance of %150 one edge of the plot.
+ 3.The placement of traps within the plot is dependent on the kind of vegetation - percent aerial cover, height, and patchiness are considered.
 
 ## Obtain basic summaries of your data (Neonics)
 
@@ -85,7 +81,7 @@ dim(Neonics)
 ```{r Q6}
 summary_neo_effects <- summary(Neonics$Effect)
 most_common_effects <- sort(summary_neo_effects, decreasing = TRUE)
-
+most_common_effects
 ```
 
 > Answer:  The most common effects are 1-population, 2-mortality, and 3-behavior. These effects might be of interest because they give insight to the likely reactions to the neonicotinoids and if they are showing the desired effects or not.
@@ -97,11 +93,12 @@ most_common_effects <- sort(summary_neo_effects, decreasing = TRUE)
 summary_neo_common_names <- summary(Neonics$Species.Common.Name, maxsum = 7)
 most_common_names <- sort(summary_neo_common_names, decreasing = TRUE)
 most_common_names
-# I used maxsum = 7 because when I used maxsum = 6 the top common name was 'other' which doesn't contribute.
+# I used maxsum = 7 because when I used maxsum = 6 
+# the top common name was 'other' which doesn't contribute.
 ```
 
 > Answer: The six most commonly studied species in the dataset are Honey Bee, Parasitic Wasp, Buff Tailed 
-Bumblebee, Carniolan Honey Bee, and Bunble Bee. These species are all a part of the order Hymenoptera, which
+Bumblebee, Carniolan Honey Bee, and Bumble Bee. These species are all a part of the order Hymenoptera, which
 includes bees and wasps. They might be of more interest than other species because many bees and wasps act
 as pollinators and help contribute to the growth of plants. It is especially important to make sure these
 species are not significantly negatively impacted by neonicotinoids. 
@@ -139,8 +136,8 @@ ggplot(Neonics)+
 Interpret this graph. What are the most common test locations, and do they differ over time?
 
 > Answer: The most common test locations are the lab and field natural. Over time, the
-test location of lab increased until about 2015 then declined. The test location of 
-field natural increased until about 2010 then declined.
+test location of lab peaked at about 2012 then declined. The test location of 
+field natural peaked at about 2008 then declined.
 
 11. Create a bar graph of Endpoint counts. What are the two most common end points, and how are they defined? Consult the ECOTOX_CodeAppendix for more information. 
 
@@ -176,7 +173,7 @@ summary(Litter$plotID)
 
 > Answer: The information obtained from 'unique' essentially gets rid of the duplicates so that
 only unique plotID values are shown in the output. The information obtained from 'summary' tells
-us the different plotID values as well as how many times the plotID value appeared in the dataset.
+us the unique plotID values as well as how many times the plotID value appeared in the dataset.
 
 14. Create a bar graph of functionalGroup counts. This shows you what type of litter is collected at the Niwot Ridge sites. Notice that litter types are fairly equally distributed across the Niwot Ridge sites.
 
@@ -200,9 +197,9 @@ ggplot(Litter)+
 Why is the boxplot a more effective visualization option than the violin plot in this case?
 
 > Answer: The boxplot is a more effective visualization option than the violin plot in
-this case because 
+this case because since the y-axis is so extended to account for the needles and twigs/branches types of litter, the violin plot gets condensed and does not show a visual that can be easily interpreted.
 
 What type(s) of litter tend to have the highest biomass at these sites?
 
 > Answer: The types of litter that tend to have the highest biomass (dryMass) at these
-sites are mixed and needles.
+sites are needles, mixed, and twigs/branches.
