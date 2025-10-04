@@ -71,21 +71,9 @@ class(NEON_NIWO_litter$collectDate)
 ```{r build plot theme}
 #3
 
-my_theme <- theme_base() + 
-  theme(
-    line = element_line(
-      color='red',
-      linewidth =2
-    ),
-    legend.background = element_rect(
-      color='grey',
-      fill = 'orange'
-    ),
-    legend.title = element_text(
-      color='blue'
-    )
-    
-  )
+mytheme <- theme_classic(base_size = 12) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top")
 
 ```
 
