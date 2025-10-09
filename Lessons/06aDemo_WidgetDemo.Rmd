@@ -4,11 +4,21 @@ output: html_document
 runtime: shiny
 ---
   
-```{r, echo = FALSE}
+```{r, echo = FALSE} 
 numericInput("n",
 "How many cars?", 5)
 renderTable({
 head(cars, input$n)
 })
+
+
+# widget is numeric input(variable, title, etc)
+# second part the rendertable is the code observing changes and runs the head
+# command for cars with the input number 
+```
+
+
+```{r, echo = FALSE} 
+
 ```
 

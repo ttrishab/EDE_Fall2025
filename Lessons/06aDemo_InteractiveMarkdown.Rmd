@@ -1,9 +1,10 @@
 ---
 title: 'Demo: Interactive R Markdown'
 author: Environmental Data Analytics | John Fay & Luana Lima 
-output: pdf_document
+output: html_document
+runtime: shiny
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: #console
 ---
 
 ## Overview
@@ -45,7 +46,7 @@ theme_set(my_theme)
 
 ### Create a base plot
 We will plot Total P as a function of time, coloring data by depth, and symbolizing by lake.
-```{r Create base plot, echo=FALSE, eval=FALSE, warning=FALSE}
+```{r Create base, echo=FALSE, eval=FALSE, warning=FALSE}
 #Construct the plot
 my_plot <- nutrient_data %>% 
   filter(year4 > 1990 & year4 < 2016) %>% 
@@ -82,6 +83,63 @@ Now tweak the above code so that the variable we plot (`tp_ug`) is specified as 
 To do this we need to convince R that the value we associate with the `y` aesthetic is a variable, not a column name. This is done by the odd convention of inserting the variable within the code `!!sym()`. The `!!` (pronounced "bang-bang") combined with `sym()` are "Tidy eval helpers" necessary because tidy-R does away with quotations. See more info [here](https://ggplot2.tidyverse.org/reference/tidyeval.html).
 
 ```{r Tweak plot to use variables, echo=FALSE, eval=FALSE, warning=FALSE}
+#Load data
+nutrient_data <- read.csv(
+  here('Data/Processed_KEY','NTL-LTER_Lake_Nutrients_PeterPaul_Processed.csv'),
+  stringsAsFactors = TRUE)
+
+#Fix dates
+nutrient_data$sampledate = ymd(nutrient_data$sampledate)
+
+#Set a default plotting theme
+my_theme <- theme_classic(base_size = 12) +
+  theme(
+      panel.grid.major = element_line(color = "gray", linewidth = 0.5),
+      panel.grid.minor = element_line(color = "lightgray", linewidth = 0.25),
+      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
+    )
+
+theme_set(my_theme)
+
+```
+
+
+### Create a base plot
+We will plot Total P as a function of time, coloring data by depth, and symbolizing by lake.
+```{r Create base plot, echo=FALSE, eval=FALSE, warning=FALSE}
+
+#create plot variables
+the_parameter <- "tp_ug"
+start_year <- 1990
+end_year <- 2016
+
+#Construct the plot
+my_plot <- nutrient_data %>% 
+  filter(year4 > start_year & year4 < end_year) %>% 
+  ggplot(aes(
+    x = sampledate,
+    y = !!sym(the_parameter),
+    color = depth,
+    shape = lakename)) +
+  geom_point(alpha = 0.4, size = 2) +
+  scale_x_date(
+    date_breaks = "1 years",
+    date_labels = '%Y') +
+  scale_shape_manual(values = c(17, 15)) +
+  labs(
+    title = paste("Concentration of",the_parameter,"over time, by depth and lake"),
+    x = "Date", 
+    y = expression(Concentration ~ (mu*g / L)), 
+    shape = "Lake", 
+    color = "Depth (m)") +
+  scale_color_viridis_c(
+    option = "mako", 
+    guide = guide_colorbar(reverse = T),
+    direction = -1)
+
+#View the plot
+my_plot
+
 
 ```
 
@@ -93,6 +151,35 @@ Next, we'll one of the uses of using variables in our plotting commands: we'll c
 To do this, rather than setting our variable values in the code chunk, we just set them as inputs to a function. Then we can copy and paste out plotting code above as the code the function executes (i.e. between the `{ }`). From there, we just call the function with the inputs we want to generate a plot. 
 
 ```{r Plot Functions, echo=FALSE, warning=FALSE}
+#create plotting function
+plot_it <-function(the_parameter, start_year,end_year){
+
+#construct the plot
+nutrient_data %>% 
+  filter(year4 > start_year & year4 < end_year) %>% 
+  ggplot(aes(
+    x = sampledate,
+    y = !!sym(the_parameter),
+    color = depth,
+    shape = lakename)) +
+  geom_point(alpha = 0.4, size = 2) +
+  scale_x_date(
+    date_breaks = "1 years",
+    date_labels = '%Y') +
+  scale_shape_manual(values = c(17, 15)) +
+  labs(
+    title = paste("Concentration of",the_parameter,"over time, by depth and lake"),
+    x = "Date", 
+    y = expression(Concentration ~ (mu*g / L)), 
+    shape = "Lake", 
+    color = "Depth (m)") +
+  scale_color_viridis_c(
+    option = "mako", 
+    guide = guide_colorbar(reverse = T),
+    direction = -1)
+}
+
+plot_it('po4',1995,2002)
 
 ```
 
@@ -160,12 +247,42 @@ Note: Before running this plot, set the previous code chunk to not evaluate
 
 ```{r widget exploration, echo=FALSE}
 # Create a selectInput widget to select which nutrient to display in the plot
-
+selectInput(
+  inputId = "the_nutrient",
+  label = "Select the nutrient to show",
+  choices = c('tn_ug','tp_ug','nh34','no23','po4'),
+  selected = 'tn_ug'
+)
 
 # Create a sliderInput to set the date range
+sliderInput(
+  inputId = 'yearSlider',
+  label = 'Select a date range',
+  min = min(nutrient_data$year4),
+  max = max(nutrient_data$year4),
+  step = 1,
+  round = T,
+  value = c(min(nutrient_data$year4), max(nutrient_data$year4))
+)
+
+#create a slider widget to set the start and end
+renderPlot(
+  plot_it(
+    input$the_nutrient,
+    input$yearSlider[1],
+    input$yearSlider[2]
+  )
+)
+
+renderText(
+  paste("you selected",input$the_nutrient)
+)
 
 
 # Create a renderPlot object to display the plot 
+
+
+
 # created with the plot_it function
 
 
