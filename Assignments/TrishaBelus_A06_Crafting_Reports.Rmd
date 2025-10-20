@@ -122,7 +122,9 @@ Ozone_2018 <- epa_data %>%
   geom_boxplot(aes(y= Ozone))+
  labs( title = "Monthly Ozone Concentrations (2018)",
       x= "Month",
-      y = expression(paste('Concentration ', (mu)*g/m^3)))
+      y = expression(paste('Concentration ', (µg/m^3))))
+
+#when I did y = expression(paste('Concentration ', mu*g/m^3))) and knitted the document, it changed the mu to a different symbol so I had to look up the 
 
 plot(Ozone_2018)
 ```
@@ -136,7 +138,7 @@ Ozone_2019 <- epa_data %>%
   geom_boxplot(aes(y= Ozone))+
   labs( title = "Monthly Ozone Concentrations (2019)",
       x= "Month",
-      y = expression(paste('Concentration ', (mu)*g/m^3)))
+      y = expression(paste('Concentration ', (µg/m^3))))
      
 
 plot(Ozone_2019)
@@ -152,7 +154,7 @@ Add a table of contents and list of figures to your document and knit to a PDF. 
 
 ## Git Repository
 
-
+https://github.com/ttrishab/EDE_Fall2025.git
 
 I did not use AI in the completion of this assignment.
 
