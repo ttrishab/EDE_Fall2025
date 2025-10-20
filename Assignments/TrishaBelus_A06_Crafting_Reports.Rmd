@@ -124,7 +124,6 @@ Ozone_2018 <- epa_data %>%
       x= "Month",
       y = expression(paste('Concentration ', (µg/m^3))))
 
-#when I did y = expression(paste('Concentration ', mu*g/m^3))) and knitted the document, it changed the mu to a different symbol so I had to look up the 
 
 plot(Ozone_2018)
 ```
