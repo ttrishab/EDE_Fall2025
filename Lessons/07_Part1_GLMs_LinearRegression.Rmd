@@ -83,6 +83,8 @@ irradiance.regression <- lm(
   irradianceWater ~ depth)
 summary(irradiance.regression)
 
+#intercept 486, slope -95
+
 # Correlation
 cor.test(PeterPaul.chem.nutrients$irradianceWater, PeterPaul.chem.nutrients$depth)
 ```
@@ -97,6 +99,7 @@ An exploratory option to visualize the model fit is to use the function `plot`. 
 1. **Residuals vs. Fitted.** The value predicted by the line of best fit is the fitted value, and the residual is the distance of that actual value from the predicted value. By definition, there will be a balance of positive and negative residuals. Watch for drastic asymmetry from side to side or a marked departure from zero for the red line - these are signs of a poor model fit.
 
 2. **Normal Q-Q.** The points should fall close to the 1:1 line. We often see departures from 1:1 at the high and low ends of the dataset, which could be outliers. 
+..compare residuals to normal distribution, should be diagonal line
 
 3. **Scale-Location.** Similar to the residuals vs. fitted graph, this will graph the squared standardized residuals by the fitted values. 
 
