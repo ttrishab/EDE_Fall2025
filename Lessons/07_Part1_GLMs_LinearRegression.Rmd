@@ -97,13 +97,15 @@ So, we see there is a significant negative correlation between irradiance and de
 An exploratory option to visualize the model fit is to use the function `plot`. This function will return four graphs, which are intended only for checking the fit of the model and not for communicating results. The plots that are returned are: 
 
 1. **Residuals vs. Fitted.** The value predicted by the line of best fit is the fitted value, and the residual is the distance of that actual value from the predicted value. By definition, there will be a balance of positive and negative residuals. Watch for drastic asymmetry from side to side or a marked departure from zero for the red line - these are signs of a poor model fit.
+..red line flat, symmetry around red line
 
 2. **Normal Q-Q.** The points should fall close to the 1:1 line. We often see departures from 1:1 at the high and low ends of the dataset, which could be outliers. 
 ..compare residuals to normal distribution, should be diagonal line
 
 3. **Scale-Location.** Similar to the residuals vs. fitted graph, this will graph the squared standardized residuals by the fitted values. 
 
-4. **Residuals vs. Leverage.** This graph will display potential outliers. The values that fall outside the dashed red lines (Cook's distance) are outliers for the model. Watch for drastic departures of the solid red line from horizontal - this is a sign of a poor model fit.
+4. **Residuals vs. Leverage.** This graph will display potential outliers. The values that fall outside the dashed red lines (Cook's distance) are outliers for the model. Watch for drastic departures of the solid red line from horizontal - this is a sign of a poor model fit. 
+..outside dashed is outlier
 
 ```{r, fig.height = 3, fig.width = 4}
 par(mfrow = c(2,2), mar=c(4,4,4,4))
@@ -120,6 +122,7 @@ irradiancebydepth <-
   ylim(0, 2000) +
   geom_point() 
 print(irradiancebydepth) 
+#ylim gets rid of outlier
 ```
 
 Given the distribution of irradiance values, we don't have a linear relationship between x and y in this case. Let's try log-transforming the irradiance values. Note we also removing the observations that seems to ba an outlier.
@@ -187,11 +190,14 @@ PeterPaulnutrients <-
 PeterPaulCorr <- cor(PeterPaulnutrients)
 corrplot(PeterPaulCorr, method = "ellipse")
 corrplot.mixed(PeterPaulCorr, upper = "ellipse")
+
+#skinny corrplot strong, color is pos or neg
 ```
 
 ## AIC to select variables
 
 However, it is possible to over-parameterize a linear model. Adding additional explanatory variables takes away degrees of freedom, and if explanatory variables co-vary the interpretation can become overly complicated. Remember, an ideal statistical model balances simplicity and explanatory power! To help with this tradeoff, we can use the **Akaike's Information Criterion (AIC)** to compute a stepwise regression that either adds explanatory variables from the bottom up or removes explanatory variables from a full set of suggested options. The smaller the AIC value, the better. 
+..smaller AIC good
 
 Let's say we want to know which explanatory variables will allow us to best predict total phosphorus concentrations. Potential explanatory variables from the dataset could include depth, dissolved oxygen, temperature, PAR, total N concentration, and phosphate concentration.
 
