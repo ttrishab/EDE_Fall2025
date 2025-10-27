@@ -113,7 +113,7 @@ summary(tempdepth.regression)
 ---
 
 ## Multiple regression
-Let's tackle a similar question from a different approach. Here, we want to explore what might the best set of predictors for lake temperature in July across the monitoring period at the North Temperate Lakes LTER. 
+Let's tackle a similar question from a different approach. Here, we want to explore what might the best set of predictors for lake temperature in July across the monitoring period at the North Temperate Lakes fLTER. 
 
 
 9. Run an AIC to determine what set of explanatory variables (year4, daynum, depth) is best suited to predict temperature.
@@ -206,13 +206,24 @@ Totals.groups
 
 17. If we were just looking at Peter Lake and Paul Lake. What's another test we might explore to see whether they have distinct mean temperatures? 
 
->Answer: a two-sample t-test
+>Answer: If we were just looking at Peter Lake and Paul Lake, a two-sample t-test could be another test to explore to see whether they have distinct mean temperatures.
 
 
 
 18. Wrangle the July data to include only records for Crampton Lake and Ward Lake. Run the two-sample T-test on these data to determine whether their July temperature are same or different. What does the test say? Are the mean temperatures for the lakes equal? Does that match you answer for part 16?
 
 ```{r t.test}
+
+NTL_July_twolakes <- NTL_Raw %>%
+  filter(month(sampledate) == 7) %>%
+  select("lakename", "year4", "daynum", "depth", "temperature_C") %>%
+  filter(lakename == "Crampton Lake" & "Ward Lake" )
+  na.omit(NTL_July)
+  
+  
+  NTL_twolakes.t.test <- t.test(NTL_July_twolakes$temperatur_C ~ NTL_July_twolakes$lakename)
+
+  NTL_twolakes.t.test
 
 ```
 
