@@ -27,13 +27,15 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 * Set your ggplot theme
 
 ```{r}
-getwd()
-here()
 
 library(tidyverse)
 library(lubridate)
 library(zoo)
 library(trend)
+library(here)
+
+getwd()
+here()
 
 mytheme <- theme_classic(base_size = 12) +
   theme(axis.text = element_text(color = "black"), 
@@ -123,11 +125,17 @@ GaringerOzone <- left_join(Days, GaringerOzone)
 
 ggplot(GaringerOzone,aes(x = Date, y = Daily.Max.8.hour.Ozone.Concentration))+
   geom_line()+
-  geom_smooth(method = 'lm')
+  geom_smooth(method = 'lm')+
+  labs(title = "Ozone Concentrations Over Time",
+       y = "Ozone Concentration (ppm)",
+       x = "Date (days)")
+```
 
 ```
 
->Answer:
+>Answer: This plot suggests that there is a slight downward 
+trend in ozone concentrations over time since the smoothed 
+linear trend has a slight negative slope.
 
 ## Time Series Analysis
 
@@ -143,7 +151,12 @@ GaringerOzone <- GaringerOzone %>%
 
 ```
 
-> Answer: We didn't use a piecewise interpolation because there is a clear repeating up and down pattern and making the gaps in data equal to either the data before or after will make a more horizontal pattern. We didn't use a spline interpolation because a quadratic would be inappropraite for this type of seasonal data and might not preserve the observed pattern. 
+> Answer: We didn't use a piecewise interpolation because 
+there is a clear repeating up and down pattern and making 
+the gaps in data equal to either the data before or after 
+will make a more horizontal pattern. We didn't use a spline
+interpolation because a quadratic would be inappropraite for
+this type of seasonal data and might not preserve the observed pattern. 
 
 
 9. Create a new data frame called `GaringerOzone.monthly` that contains aggregated data: mean ozone concentrations for each month. In your pipe, you will need to first add columns for year and month to form the groupings. In a separate line of code, create a new Date column with each month-year combination being set as the first day of the month (this is for graphing purposes only)
@@ -159,7 +172,6 @@ GaringerOzone.monthly <- GaringerOzone %>%
   
 GaringerOzone.monthly <- GaringerOzone.monthly %>%
    mutate(Date = as.Date(paste(Year, Month, "01", sep = "-")))
-
 
 ```
 
@@ -182,7 +194,6 @@ f_year2 <- year(first(GaringerOzone.monthly$Date))
 GaringerOzone.monthly.ts <-ts(GaringerOzone.monthly$Monthly_Mean_Ozone,
                               start = c(f_year2, f_month2),
                               frequency = 12)
-
 
 ```
 
@@ -207,11 +218,12 @@ plot(ozone_monthly_decomp)
 ozone_monthly_trend <- Kendall::SeasonalMannKendall(GaringerOzone.monthly.ts)
 
 ozone_monthly_trend
-summary(ozone_monthly_trend)
 
 ```
 
-> Answer: The seasonal Mann-Kendall is most appropriate because there is a very clear seasonal trend for the monthly ozone data. 
+> Answer: The seasonal Mann-Kendall is most appropriate because
+there is a very clear seasonal trend for the monthly ozone data.
+The up and down pattern clearly has a clear seasonal cycle over the years.  
 
 13. Create a plot depicting mean monthly ozone concentrations over time, with both a geom_point and a geom_line layer. Edit your axis labels accordingly.
 
@@ -220,14 +232,21 @@ summary(ozone_monthly_trend)
 ggplot(GaringerOzone.monthly, aes(x = Date, y = Monthly_Mean_Ozone))+
   geom_point()+
   geom_line()+
-  labs(title = "Monthly Ozone Concentrations Over Time",
-       y = "Ozone Concentration")
-
+  labs(title = "Mean Monthly Ozone Concentrations Over Time",
+       y = "Mean Ozone Concentration(ppm)",
+       x = "Date (months)")
 ```
 
 14. To accompany your graph, summarize your results in context of the research question. Include output from the statistical test in parentheses at the end of your sentence. Feel free to use multiple sentences in your interpretation.
 
-> Answer: To answer the question: Have ozone concentrations changed over the 2010s at this station? First the seasonal Mann-Kendall preformed resulted in failing to reject the null hypothesis that there is no monotonic trend (p-value of 0.16323 which is not below 0.05). Thus, the ozon concentrations have been changing over time because beyond the seasonality, there is still some differences beyond a consistent up and down pattern.  
+> Answer: To answer the question: Have ozone concentrations changed over 
+the 2010s at this station? As seen on the graph of mean monthly ozone concentrations,
+the peaks of the seasonal cycle are higher in the earlier years and the dips
+in the seasonal cycle are lower in the later years. This exemplyfies a downward
+trend of ozone concentrations over time (Seasonal Mann-Kendall resulted in p-value
+of 0.16323 which is not below 0.05). Thus, the ozone concentrations have been 
+changing over time because beyond the seasonality, there is still some differences
+beyond a consistent up and down pattern.  
 
 15. Subtract the seasonal component from the `GaringerOzone.monthly.ts`. Hint: Look at how we extracted the series components for the EnoDischarge on the lesson Rmd file.
 
@@ -239,13 +258,15 @@ ozone_monthly_components <- as.data.frame(ozone_monthly_decomp$time.series[,1:3]
   select(trend, remainder) %>%
   mutate(no_season = trend + remainder)
 
-
 #16
 ozone_monthly_mk <- mk.test(ozone_monthly_components$no_season)
 ozone_monthly_mk
 
-
-
 ```
 
-> Answer: The p-value for this is 0.1039 which is lower than the seasonal Mann-Kendall (0.16323) which means that the it is still not statisically significant but closer to the 0.05 threshold. Also, the tau value is negative meaning there is a negative correlation between the ozone concentration in time, indicating a downward slope of ozone concentration as time goes on.
+> Answer: The p-value for this Mann Kendall is 0.1039 which is lower 
+than the seasonal Mann-Kendall (0.16323) which means that the it is 
+still not statisically significant but closer to the 0.05 threshold.
+Also, the tau value is negative meaning there is a negative correlation 
+between the ozone concentration and time, indicating a downward slope of
+ozone concentration as time goes on.
