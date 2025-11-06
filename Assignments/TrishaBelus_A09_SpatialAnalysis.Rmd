@@ -172,9 +172,8 @@ sf_join <- gage_loc_sf %>%
     by = c("site_no" = "site_no") 
     )
 
-sf_join <-sf_join %>%
-  na.omit()
-  
+sf_join <-na.omit(sf_join)
+
 
 #17. Show the column names in the resulting spatial dataframe
 colnames(sf_join)
@@ -192,7 +191,8 @@ Now we can examine where the flooding appears most acute by visualizing gage hei
 
 ```{r map gage sites}
 #Map the points, sized by gage height
-
+mapview(neb_counties_sf, col.regions = "gray")+
+mapview(sf_join, zcol = "gage_ht")
 
 ```
 
@@ -210,12 +210,17 @@ Up next we will do some spatial analysis with our data. To prepare for this, we 
 
 ```{r spatial analysis}
 #20 Transform the counties and gage location datasets to UTM Zone 14
+counties_utm14_sf <- st_transform(neb_counties_sf, c=32614)
 
-
+gage_utm14_sf <- st_transform(gage_loc_sf, c=32614)
 
 #21 Plot the data
-
-
+ggplot()+
+  geom_sf(data=counties_utm14_sf, aes(fill =ALAND, color = "white"))+
+  geom_sf(data=gage_utm14_sf, color="black") + 
+  scale_fill_gradient(low="yellow", high="red")+
+  theme(legend.position ="bottom",
+        legend.text = element_text(size =8))
 
 ```
 
@@ -235,15 +240,30 @@ Now let's zoom into a particular county and examine the gages located there.
 
 ```{r spatial selection}
 #22 Select Washington county to a new spatial dataframe
-
-
+washington_sf <- counties_utm14_sf %>%
+  filter(NAME == "Washington")
+  
 #23 Spatially select gages within the selected county to a new spatial dataframe
+gage_intersect_sf <- counties_utm14_sf %>%  
+  st_filter(gage_utm14_sf, .predicate = st_intersects)
 
-
-#24 Spatially select gages within 20k of the selected county to a new spatial dataframe
-
+#24 Spatially select gages within 20km of the selected county to a new spatial dataframe
+gage_20km_sf <- st_buffer(gage_utm14_sf, 20000)
 
 #25 Plot
+ggplot()+
+  geom_sf(neb_counties_sf, aes)+
+  geom_sf(washington_sf)+
+  geom_sf(gage_intersect_sf)+
+  geom_sf(gage_20km_sf)
 
+
+
+MyMap = mapview(neb_counties_sf, col.regions = "gray")+
+        mapview(washington_sf, col.regions = "yellow")+
+        mapview(gage_intersect_sf, color = "green")+
+        mapview(gage_20km_sf, color = "red")
+
+MyMap
 
 ```

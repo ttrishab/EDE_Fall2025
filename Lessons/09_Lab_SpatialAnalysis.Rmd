@@ -71,6 +71,7 @@ We'll now use this to fetch the data directly into our R coding environment.
 
 ```{r import data from GeoJSON feature service}
 #Set the URL as the data source string
+#paste0 = no spaces
 data_source <- paste0(
   'https://services.nconemap.gov/secure/rest/services/',
   'NC1Map_Hazardous_Waste/MapServer/4/',

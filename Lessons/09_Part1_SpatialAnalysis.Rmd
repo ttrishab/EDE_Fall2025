@@ -138,7 +138,7 @@ EPAair.sites <- EPAair %>%
 EPAair.sf <- EPAair.sites %>% 
   st_as_sf(
     coords = c('mean_Lng','mean_Lat'),
-    crs=4326
+    crs=4269
     )
 
 #Save locally as a shapefile 
