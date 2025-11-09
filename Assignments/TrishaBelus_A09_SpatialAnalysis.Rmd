@@ -250,9 +250,8 @@ gage_20km_sf <- gage_utm14_sf%>%
 
 MyMap = mapview(neb_counties_sf, col.regions = "gray")+
         mapview(washington_sf, col.regions = "yellow")+
-        mapview(gage_intersect_sf, col.regions = "green")+
-        mapview(gage_20km_sf, col.regions = "red")
-
+        mapview(gage_20km_sf, col.regions = "red")+
+        mapview(gage_intersect_sf, col.regions = "green")
 MyMap
 
 ```
