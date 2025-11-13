@@ -41,7 +41,7 @@ Web scraping is the process of pulling data directly from websites. Copy and pas
 You might now feel that web scraping isn't always legitimate - and you're right! Not all content providers want their sites to be scraped. To ensure that your web scraping is done ethically, check out this great article covering the ethics and legality of web scraping: <https://prowebscraper.com/blog/is-web-scraping-legal/>
 
 
-> For discussion: Can you give examples of ethical and unethical web scraping?
+> For discussion: Can you give examples of ethical and unethical web scraping? terms of service- view only no scrape, /robots.txt after url if wirecutter/csv then no scraping. api or link, denial of service attack (repetative gettign data can look like bot attack)
 
 
 ## 1.1 Exploring the data we want to scrape
@@ -107,13 +107,13 @@ In the code chunk below, see if you can extract the Facility Name and Facility T
 
 ```{r scraping.exercise.1}
 the_facility_name <- webpage %>% 
-  html_nodes() %>% 
+  html_nodes("tr:nth-child(2) th+ .left:nth-child(2)") %>% 
   html_text()
 the_facility_name
 
-the_facility_type <- webpage  
-  
-  
+the_facility_type <- webpage %>%
+  html_nodes("tr:nth-child(2) .left~ .left+ td.left") %>%
+  html_text()
 the_facility_type
 ```
 
@@ -138,6 +138,8 @@ max_withdrawals
 Now that we've scraped the data we want into our coding environment, the next step is to wrangle these data into formats we can work with more easily, i.e. a dataframe. Here, we emply the techniques we've learned earlier in this class to do this and then plot the data. 
 ```{r create.dataframe.from.scrapings}
 #Create a dataframe of withdrawals
+
+#could also Month = rep(1:12)
 df_withdrawals <- data.frame("Month" = c(1,7,2,8,3,9,4,10,5,11,6,12), #<--NOTE: Different than recording!!
                              "Year" = rep(2020,12),
                              "Avg_Withdrawals_mgd" = as.numeric(avg_withdrawals),
