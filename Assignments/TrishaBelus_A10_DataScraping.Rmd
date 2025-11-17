@@ -179,9 +179,6 @@ ggplot(data = combined_df)+
 
 ```{r fetch.and.plot.Cary.multiyear.data }
 #9 
-cary_18_23 <- scrape.it(2018:2023,"03-92-020")
-glimpse(cary_18_23)
-
 the_years = rep(2018:2023)
 cary_pwsid = "03-92-020"
 
