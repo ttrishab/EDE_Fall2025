@@ -1,6 +1,6 @@
 ---
 title: "Assignment 10: Data Scraping"
-author: "Student Name"
+author: "Trisha Belus"
 output: pdf_document
 editor_options: 
   chunk_output_type: console
@@ -27,7 +27,10 @@ This exercise accompanies the lessons in Environmental Data Analytics on data sc
 
 ```{r 1. Project Setup, message = FALSE}
 #1 
+library(tidyverse)
+library(rvest)
 
+getwd()
 
 ```
 
@@ -40,6 +43,7 @@ Indicate this website as the as the URL to be scraped. (In other words, read the
 
 ```{r set.the.scraping.website}
 #2 
+website <- read_html("https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2024")
 
 ```
 
@@ -59,8 +63,14 @@ In the code chunk below scrape these values, assigning them to four separate var
 
 ```{r scrape.the.data}
 #3 
+Water_system <-website %>% html_nodes ("div+ table tr:nth-child(1) td:nth-child(2)") %>% html_text()
+PWSID <-website %>% html_nodes ("td tr:nth-child(1) td:nth-child(5)") %>% html_text()
+
+### bro why the freak is this numeric -39 ###
 
 
+Ownership <-website %>% html_nodes ("div+ table tr:nth-child(2) td:nth-child(4)") %>% html_text()
+MGD_months <- website %>% html_nodes ('th~ td+ td , th~ td+ td') %>% html_text()
 ```
 
 
@@ -75,9 +85,17 @@ In the code chunk below scrape these values, assigning them to four separate var
 ```{r create.a.dataframe.from.scraped.data}
 #4 
 
+df_deq <- data.frame("Month" = c(1,5,9,2,6,10,3,7,11,4,8,12), 
+                             "Year" = rep(2024,12),
+                             "Maximum_Day_Use" = as.numeric(MGD_months)) %>% 
+  mutate(Water_System_Name = !!Water_system,
+         PWSID = !!PWSID,
+         Ownership = !!Ownership,
+         Date = my(paste(Month,"-",Year)))
 
 #5 
-
+ggplot(df_deq,aes(x=Date,y=Maximum_Day_Use)) + 
+  geom_line() 
 
 ```
 
@@ -91,6 +109,33 @@ In the code chunk below scrape these values, assigning them to four separate var
 ```{r construct.a.scraping.function}
 #6. 
 
+scrape.it <- function(the_year, the_pwsid){
+  
+  scrape_website <- read_html(paste0(base_url, '?pwsid=', the_pwsid, '&year=', the_year))
+  
+  Water_system_tag <-"div+ table tr:nth-child(1) td:nth-child(2)"
+  PWSID_tag <-"td tr:nth-child(1) td:nth-child(5)"
+  Ownership_tag <-"div+ table tr:nth-child(2) td:nth-child(4)"
+  MGD_months_tag <- "th~ td+ td , th~ td+ td"
+  
+  the_water_system <- scrape_website %>% html_nodes(Water_system_tag) %>% html_text()
+  the_pwsid_name <- scrape_website %>%   html_nodes(PWSID_tag) %>%  html_text()
+  the_ownership_name <- scrape_website %>% html_nodes(Ownership_tag) %>% html_text()
+  the_mgd_value <- scrape_website %>% html_nodes(MGD_months_tag) %>% html_text()
+  
+  df_scraped <- data.frame("Month" = c(1,5,9,2,6,10,3,7,11,4,8,12), 
+                             "Year" = rep(the_year,12),
+                             "Maximum_Day_Use" = as.numeric(the_mgd_value)) %>% 
+  mutate(Water_System_Name = !!the_water_system,
+         PWSID = !!the_pwsid_name,
+         Ownership = !!the_ownership_name,
+         Date = my(paste(Month,"-",Year)))
+  
+  Sys.sleep(1) 
+
+  return(df_scraped)
+}
+
 
 ```
 
@@ -98,16 +143,23 @@ In the code chunk below scrape these values, assigning them to four separate var
 
 ```{r fetch.and.plot.Durham.2020.data}
 #7 
-
+durham_2020 <- scrape.it(2020,"03-32-010")
+glimpse(durham_2020)
 
 ```
 
-8. Use the function above to extract data for Cary (PWSID = '03-32-010') in 2020. Combine this data with the Durham data collected above and create a plot that compares Cary's to Durham's water withdrawals.
+8. Use the function above to extract data for Cary (PWSID = '03-92-010') in 2020. Combine this data with the Durham data collected above and create a plot that compares Cary's to Durham's water withdrawals.
 
 ```{r fetch.and.plot.Cary.2020.data}
 #8 
+cary_2020 <- scrape.it(2020,"03-92-020")
+glimpse(cary_2020)
 
 
+combined_df <- rbind(durham_2020,cary_2020)
+
+ggplot(data = combined_df)+
+  geom_line(aes(x=Date, y= Maximum_Day_Use, color = Water_System_Name))
 ```
 
 
@@ -117,6 +169,7 @@ In the code chunk below scrape these values, assigning them to four separate var
 
 ```{r fetch.and.plot.Cary.multiyear.data }
 #9 
+
 
 
 ```
