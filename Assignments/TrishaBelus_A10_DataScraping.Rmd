@@ -91,7 +91,10 @@ df_deq <- data.frame("Month" = c(1,5,9,2,6,10,3,7,11,4,8,12),
 
 #5 
 ggplot(df_deq,aes(x=Date,y=Maximum_Day_Use)) + 
-  geom_line() 
+  geom_line() +
+  labs(x = "Date (months)",
+      y = "Maximum Daily Withdrawals (MGD)",
+      title = "Durham's 2024 Municipal Local Water Supply")
 
 ```
 
@@ -144,7 +147,10 @@ durham_2020 <- scrape.it(2020,"03-32-010")
 glimpse(durham_2020)
 
 ggplot(durham_2020)+
-  geom_line(aes(x = Date, y = Maximum_Day_Use))
+  geom_line(aes(x = Date, y = Maximum_Day_Use)) +
+  labs(x = "Date (months)",
+      y = "Maximum Daily Withdrawals (MGD)",
+      title = "Durham's 2020 Municipal Local Water Supply")
 
 ```
 
@@ -159,7 +165,11 @@ glimpse(cary_2020)
 combined_df <- rbind(durham_2020,cary_2020)
 
 ggplot(data = combined_df)+
-  geom_line(aes(x=Date, y= Maximum_Day_Use, color = Water_System_Name))
+  geom_line(aes(x=Date, y= Maximum_Day_Use, color = Water_System_Name)) +
+  labs(x = "Date (months)",
+      y = "Maximum Daily Withdrawals (MGD)",
+      title = "Durham's and Cary's 2020 Municipal Local Water Supply",
+      color = "Water System City")
 ```
 
 
@@ -180,7 +190,10 @@ the_df <- bind_rows(the_dfs)
 
 ggplot(the_df,aes(x=Date,y=Maximum_Day_Use)) + 
   geom_line() + 
-  geom_smooth(method="loess",se=FALSE)
+  geom_smooth(method="loess",se=FALSE) +
+  labs(x = "Date (months)",
+      y = "Maximum Daily Withdrawals (MGD)",
+      title = "Cary's 2018-2023 Municipal Local Water Supply")
 
 ```
 
