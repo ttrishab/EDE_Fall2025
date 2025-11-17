@@ -65,10 +65,6 @@ In the code chunk below scrape these values, assigning them to four separate var
 #3 
 Water_system <-website %>% html_nodes ("div+ table tr:nth-child(1) td:nth-child(2)") %>% html_text()
 PWSID <-website %>% html_nodes ("td tr:nth-child(1) td:nth-child(5)") %>% html_text()
-
-### bro why the freak is this numeric -39 ###
-
-
 Ownership <-website %>% html_nodes ("div+ table tr:nth-child(2) td:nth-child(4)") %>% html_text()
 MGD_months <- website %>% html_nodes ('th~ td+ td , th~ td+ td') %>% html_text()
 ```
@@ -111,6 +107,7 @@ ggplot(df_deq,aes(x=Date,y=Maximum_Day_Use)) +
 
 scrape.it <- function(the_year, the_pwsid){
   
+  base_url <- "https://www.ncwater.org/WUDC/app/LWSP/report.php"
   scrape_website <- read_html(paste0(base_url, '?pwsid=', the_pwsid, '&year=', the_year))
   
   Water_system_tag <-"div+ table tr:nth-child(1) td:nth-child(2)"
@@ -146,6 +143,9 @@ scrape.it <- function(the_year, the_pwsid){
 durham_2020 <- scrape.it(2020,"03-32-010")
 glimpse(durham_2020)
 
+ggplot(durham_2020)+
+  geom_line(aes(x = Date, y = Maximum_Day_Use))
+
 ```
 
 8. Use the function above to extract data for Cary (PWSID = '03-92-010') in 2020. Combine this data with the Durham data collected above and create a plot that compares Cary's to Durham's water withdrawals.
@@ -169,11 +169,21 @@ ggplot(data = combined_df)+
 
 ```{r fetch.and.plot.Cary.multiyear.data }
 #9 
+cary_18_23 <- scrape.it(2018:2023,"03-92-020")
+glimpse(cary_18_23)
 
+the_years = rep(2018:2023)
+cary_pwsid = "03-92-020"
 
+the_dfs <- map(the_years,scrape.it,the_pwsid=cary_pwsid)
+the_df <- bind_rows(the_dfs)
+
+ggplot(the_df,aes(x=Date,y=Maximum_Day_Use)) + 
+  geom_line() + 
+  geom_smooth(method="loess",se=FALSE)
 
 ```
 
 Question: Just by looking at the plot (i.e. not running statistics), does Cary have a trend in water usage over time?
-> Answer:
+> Answer: Just by looking at the plot, Cary has a positive upwards trend in water usage over time as shown by the smoothed line on the graph.
 >
